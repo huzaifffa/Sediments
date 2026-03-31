@@ -5,6 +5,15 @@ import seaborn as sns
 from mpl_toolkits.mplot3d import Axes3D
 
 sns.set(style='whitegrid')
+import matplotlib as mpl
+mpl.rcParams.update({
+    'font.size': 14,
+    'axes.titlesize': 18,
+    'axes.labelsize': 16,
+    'xtick.labelsize': 12,
+    'ytick.labelsize': 12,
+    'legend.fontsize': 12,
+})
 
 CSV_PATH = 'pca_scores.csv'
 OUT_PATH = 'pca_triplot_3d_fixed.png'

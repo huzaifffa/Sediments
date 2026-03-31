@@ -12,6 +12,14 @@ warnings.filterwarnings('ignore')
 # Set style for better visualizations
 sns.set_style("whitegrid")
 plt.rcParams['figure.figsize'] = (16, 10)
+plt.rcParams.update({
+    'font.size': 14,
+    'axes.titlesize': 18,
+    'axes.labelsize': 16,
+    'xtick.labelsize': 12,
+    'ytick.labelsize': 12,
+    'legend.fontsize': 12,
+})
 
 # Load the data
 print("Loading metal concentration data...")
@@ -62,12 +70,12 @@ for idx, method in enumerate(linkage_methods):
     
     # Plot dendrogram
     ax = axes[idx]
-    dendrogram(Z, labels=sample_names, ax=ax, leaf_font_size=8)
+    dendrogram(Z, labels=sample_names, ax=ax, leaf_font_size=12)
     ax.set_title(f'Hierarchical Clustering Dendrogram ({method.upper()} Linkage)', 
-                 fontsize=14, fontweight='bold')
-    ax.set_xlabel('Sample', fontsize=12)
-    ax.set_ylabel('Distance', fontsize=12)
-    ax.tick_params(axis='x', rotation=90)
+                 fontsize=18, fontweight='bold')
+    ax.set_xlabel('Sample', fontsize=16)
+    ax.set_ylabel('Distance', fontsize=16)
+    ax.tick_params(axis='x', rotation=90, labelsize=12)
 
 plt.tight_layout()
 plt.savefig('dendrograms_comparison.png', dpi=300, bbox_inches='tight')
@@ -86,12 +94,12 @@ fig, ax = plt.subplots(figsize=(20, 10))
 dendro = dendrogram(Z_ward, labels=sample_names, ax=ax, 
                     leaf_font_size=10, color_threshold=0)
 ax.set_title('Agglomerative Hierarchical Clustering - Ward Linkage', 
-             fontsize=16, fontweight='bold', pad=20)
-ax.set_xlabel('Sample', fontsize=13, fontweight='bold')
-ax.set_ylabel('Euclidean Distance', fontsize=13, fontweight='bold')
+             fontsize=20, fontweight='bold', pad=20)
+ax.set_xlabel('Sample', fontsize=16, fontweight='bold')
+ax.set_ylabel('Euclidean Distance', fontsize=16, fontweight='bold')
 ax.axhline(y=ax.get_ylim()[1] * 0.5, c='red', linestyle='--', linewidth=2, label='Suggested Cutoff')
-ax.legend(fontsize=11)
-plt.xticks(rotation=90)
+ax.legend(fontsize=12)
+plt.xticks(rotation=90, fontsize=12)
 plt.tight_layout()
 plt.savefig('dendrogram_ward_detailed.png', dpi=300, bbox_inches='tight')
 print("✓ Saved: dendrogram_ward_detailed.png")
@@ -152,9 +160,9 @@ sns.heatmap(X_sorted, cmap='RdYlBu_r', xticklabels=df.columns[1:],
             yticklabels=names_sorted, cbar_kws={'label': 'Standardized Concentration'},
             ax=ax)
 ax.set_title(f'Metal Concentrations Heatmap (Sorted by {optimal_clusters} Clusters)', 
-             fontsize=14, fontweight='bold')
-ax.set_xlabel('Metal Elements', fontsize=12, fontweight='bold')
-ax.set_ylabel('Samples', fontsize=12, fontweight='bold')
+             fontsize=18, fontweight='bold')
+ax.set_xlabel('Metal Elements', fontsize=16, fontweight='bold')
+ax.set_ylabel('Samples', fontsize=16, fontweight='bold')
 
 # Add cluster boundaries
 cluster_boundaries = np.where(np.diff(clusters_sorted) != 0)[0] + 1
@@ -192,8 +200,8 @@ sns.heatmap(dist_matrix, xticklabels=sample_names, yticklabels=sample_names,
             ax=ax)
 ax.set_title('Euclidean Distance Matrix Between Samples', 
              fontsize=14, fontweight='bold')
-plt.xticks(rotation=90, fontsize=8)
-plt.yticks(rotation=0, fontsize=8)
+plt.xticks(rotation=90, fontsize=12)
+plt.yticks(rotation=0, fontsize=12)
 plt.tight_layout()
 plt.savefig('distance_matrix_heatmap.png', dpi=300, bbox_inches='tight')
 print("✓ Saved: distance_matrix_heatmap.png")
