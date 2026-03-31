@@ -200,11 +200,18 @@ def plot_dendrogram(linkage_matrix, labels, outpath):
 	import matplotlib.pyplot as plt
 	from scipy.cluster.hierarchy import dendrogram
 
+	title_fontsize = 20
+	axis_fontsize = 16
+	tick_fontsize = 13
+	leaf_fontsize = 13
+
 	plt.figure(figsize=(12, 6))
-	dendrogram(linkage_matrix, labels=labels, leaf_rotation=45, leaf_font_size=9, color_threshold=None)
-	plt.title('Hierarchical Clustering Dendrogram')
-	plt.xlabel('Samples')
-	plt.ylabel('Distance')
+	dendrogram(linkage_matrix, labels=labels, leaf_rotation=45, leaf_font_size=leaf_fontsize, color_threshold=None)
+	plt.title('Hierarchical Clustering Dendrogram of Trace Elements', fontsize=title_fontsize)
+	plt.xlabel('Samples', fontsize=axis_fontsize)
+	plt.ylabel('Distance', fontsize=axis_fontsize)
+	plt.xticks(fontsize=tick_fontsize)
+	plt.yticks(fontsize=tick_fontsize)
 	plt.tight_layout()
 	plt.savefig(outpath, dpi=300, bbox_inches='tight')
 	plt.close()
