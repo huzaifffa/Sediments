@@ -92,21 +92,84 @@ def compute_hca_clusters(scaled_df, n_clusters=4, method='ward'):
 	return linkage_matrix, cluster_series
 
 
-def plot_heatmap(loadings, explained, outpath):
+def plot_heatmap(scaled_df, cluster_series, linkage_matrix, outpath):
 	import matplotlib.pyplot as plt
 	import seaborn as sns
+	from matplotlib.colors import LinearSegmentedColormap
+	from scipy.cluster.hierarchy import linkage, fcluster
 
-	heatmap_cols = loadings.columns[:min(4, len(loadings.columns))]
-	heatmap_data = loadings.loc[:, heatmap_cols]
-	plt.figure(figsize=(10, max(5, len(heatmap_data) * 0.35)))
-	sns.heatmap(heatmap_data, annot=True, fmt='.2f', cmap='coolwarm', center=0, linewidths=0.5)
-	title_suffix = ', '.join([f'{col} ({explained[col] * 100:.1f}%)' for col in heatmap_cols])
-	plt.title(f'PCA Loadings Heatmap\n{title_suffix}')
-	plt.xlabel('Principal Components')
-	plt.ylabel('Elements')
-	plt.tight_layout()
-	plt.savefig(outpath, dpi=300, bbox_inches='tight')
-	plt.close()
+	heatmap_min = float(scaled_df.min().min())
+	heatmap_max = float(scaled_df.max().max())
+	if np.isclose(heatmap_max, heatmap_min):
+		heatmap_df = pd.DataFrame(0.5, index=scaled_df.index, columns=scaled_df.columns)
+	else:
+		heatmap_df = (scaled_df - heatmap_min) / (heatmap_max - heatmap_min)
+
+	cluster_palette = ['#1f4e79', '#f28e2b', '#59a14f', '#e15759', '#76b7b2', '#b07aa1']
+	heatmap_cmap = LinearSegmentedColormap.from_list(
+		'blue_green_yellow_heatmap',
+		['#08306b', '#2171b5', '#41b6c4', '#4daf4a', '#a1d76a', '#ffe066']
+	)
+	title_fontsize = 26
+	axis_fontsize = 24
+	tick_fontsize = 16
+	colorbar_fontsize = 16
+	cluster_band_size = 0.025
+	unique_clusters = sorted(cluster_series.unique())
+	cluster_colors = {
+		cluster_id: cluster_palette[(cluster_id - 1) % len(cluster_palette)]
+		for cluster_id in unique_clusters
+	}
+	row_colors = cluster_series.map(cluster_colors)
+	column_linkage_matrix = linkage(scaled_df.T.values, method='ward')
+	column_cluster_ids = fcluster(
+		column_linkage_matrix,
+		t=min(4, scaled_df.shape[1]),
+		criterion='maxclust'
+	)
+	column_cluster_colors = {
+		cluster_id: cluster_palette[(cluster_id - 1) % len(cluster_palette)]
+		for cluster_id in sorted(np.unique(column_cluster_ids))
+	}
+	col_colors = pd.Series(column_cluster_ids, index=scaled_df.columns).map(column_cluster_colors)
+
+	cluster_grid = sns.clustermap(
+		heatmap_df,
+		row_linkage=linkage_matrix,
+		col_linkage=column_linkage_matrix,
+		row_colors=row_colors,
+		col_colors=col_colors,
+		cmap=heatmap_cmap,
+		vmin=0,
+		vmax=1,
+		linewidths=0.2,
+		linecolor='#f4f0e8',
+		figsize=(16, max(9, len(scaled_df) * 0.65)),
+		dendrogram_ratio=(0.16, 0.14),
+		colors_ratio=(cluster_band_size, cluster_band_size),
+		cbar_pos=(0.93, 0.24, 0.025, 0.48),
+		cbar_kws={'label': 'Normalized Concentration (0-1)'}
+	)
+	cluster_grid.fig.suptitle('Heatmap of Trace Elements', fontsize=title_fontsize, y=0.99, fontweight='bold')
+	cluster_grid.ax_heatmap.set_xlabel('Elements', fontsize=axis_fontsize)
+	cluster_grid.ax_heatmap.set_ylabel('Samples', fontsize=axis_fontsize)
+	cluster_grid.ax_heatmap.tick_params(axis='x', labelsize=tick_fontsize, pad=8)
+	cluster_grid.ax_heatmap.tick_params(axis='y', labelsize=tick_fontsize, pad=6)
+	plt.setp(cluster_grid.ax_heatmap.get_xticklabels(), rotation=35, ha='right', rotation_mode='anchor')
+	plt.setp(cluster_grid.ax_heatmap.get_yticklabels(), rotation=0)
+	cluster_grid.ax_row_dendrogram.set_xticks([])
+	cluster_grid.ax_row_dendrogram.set_yticks([])
+	cluster_grid.ax_col_dendrogram.set_xticks([])
+	cluster_grid.ax_col_dendrogram.set_yticks([])
+	cluster_grid.ax_row_colors.set_xticks([])
+	cluster_grid.ax_row_colors.set_yticks([])
+	cluster_grid.ax_col_colors.set_xticks([])
+	cluster_grid.ax_col_colors.set_yticks([])
+	cluster_grid.cax.tick_params(labelsize=colorbar_fontsize)
+	cluster_grid.cax.set_ylabel('Normalized Concentration (0-1)', fontsize=colorbar_fontsize)
+	cluster_grid.fig.subplots_adjust(left=0.08, right=0.9, bottom=0.18, top=0.9)
+	cluster_grid.fig.savefig(outpath, dpi=300, bbox_inches='tight')
+	plt.close(cluster_grid.fig)
 
 
 def plot_scree(explained, outpath):
@@ -142,11 +205,11 @@ def plot_triplot(scores, cluster_series, explained, outpath):
 	from matplotlib.lines import Line2D
 	from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 
-	title_fontsize = 18
+	title_fontsize = 22
 	axis_fontsize = 14
-	tick_fontsize = 12
-	label_fontsize = 12
-	legend_fontsize = 12
+	tick_fontsize = 13
+	label_fontsize = 13
+	legend_fontsize = 13
 
 	if scores.shape[1] < 3:
 		raise ValueError('At least three principal components are required for the triplot.')
@@ -280,8 +343,8 @@ def run_pca_menu():
 	choice = input('Enter choice (1-6): ').strip()
 
 	if choice == '1' or choice == '5':
-		outpath = os.path.join(outdir, f'{prefix}_pca_heatmap.png')
-		plot_heatmap(loadings, explained, outpath)
+		outpath = os.path.join(outdir, f'{prefix}_hca_cluster_heatmap.png')
+		plot_heatmap(scaled_df, cluster_series, linkage_matrix, outpath)
 		print('Saved heatmap to', outpath)
 
 	if choice == '2' or choice == '5':
