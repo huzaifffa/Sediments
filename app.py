@@ -142,6 +142,12 @@ def plot_triplot(scores, cluster_series, explained, outpath):
 	from matplotlib.lines import Line2D
 	from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 
+	title_fontsize = 18
+	axis_fontsize = 14
+	tick_fontsize = 12
+	label_fontsize = 12
+	legend_fontsize = 12
+
 	if scores.shape[1] < 3:
 		raise ValueError('At least three principal components are required for the triplot.')
 
@@ -170,18 +176,21 @@ def plot_triplot(scores, cluster_series, explained, outpath):
 		)
 		legend_handles.append(
 			Line2D([0], [0], marker='o', color='w', label=f'Cluster {cluster_id}',
-				markerfacecolor=color, markeredgecolor='black', markersize=8)
+				markerfacecolor=color, markeredgecolor='black', markersize=10)
 		)
 
 	for sample_name, row in scores.iterrows():
-		ax.text(row[x_col], row[y_col], row[z_col], sample_name, fontsize=8)
+		ax.text(row[x_col], row[y_col], row[z_col], sample_name, fontsize=label_fontsize)
 
-	ax.set_xlabel(f'{x_col} ({explained[x_col] * 100:.1f}%)')
-	ax.set_ylabel(f'{y_col} ({explained[y_col] * 100:.1f}%)')
-	ax.set_zlabel(f'{z_col} ({explained[z_col] * 100:.1f}%)')
-	ax.set_title('PCA Triplot (PC2-PC3-PC1)')
+	ax.set_xlabel(f'{x_col} ({explained[x_col] * 100:.1f}%)', fontsize=axis_fontsize, labelpad=12)
+	ax.set_ylabel(f'{y_col} ({explained[y_col] * 100:.1f}%)', fontsize=axis_fontsize, labelpad=12)
+	ax.set_zlabel(f'{z_col} ({explained[z_col] * 100:.1f}%)', fontsize=axis_fontsize, labelpad=12)
+	ax.set_title('PCA Triplot (PC2-PC3-PC1) of Major Elements', fontsize=title_fontsize, pad=18)
+	ax.tick_params(axis='x', labelsize=tick_fontsize)
+	ax.tick_params(axis='y', labelsize=tick_fontsize)
+	ax.tick_params(axis='z', labelsize=tick_fontsize)
 	ax.view_init(elev=22, azim=132)
-	ax.legend(handles=legend_handles, loc='upper left', bbox_to_anchor=(1.02, 1.0))
+	ax.legend(handles=legend_handles, loc='upper left', bbox_to_anchor=(1.02, 1.0), fontsize=legend_fontsize)
 	plt.tight_layout()
 	plt.savefig(outpath, dpi=300, bbox_inches='tight')
 	plt.close()
