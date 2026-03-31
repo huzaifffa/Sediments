@@ -57,27 +57,27 @@ def save_triplot():
     ax.set_xlabel('PC1', fontsize=18)
     ax.set_ylabel('PC2', fontsize=18)
     ax.set_zlabel('PC3', fontsize=18)
-    ax.set_title('PCA Triplot (Major Elements) - Large', fontsize=22)
+    ax.set_title('PCA Triplot (Major Elements)', fontsize=22)
     ax.legend()
     plt.tight_layout()
     png = f'{OUT_PREFIX}_pca_triplot.png'
-    pdf = f'{OUT_PREFIX}_pca_triplot.pdf'
+    # pdf = f'{OUT_PREFIX}_pca_triplot.pdf'
     plt.savefig(png, dpi=SAVE_DPI, bbox_inches='tight')
-    plt.savefig(pdf, dpi=SAVE_DPI, bbox_inches='tight')
+    # plt.savefig(pdf, dpi=SAVE_DPI, bbox_inches='tight')
     plt.close()
 
 
 def save_dendrogram():
     fig, ax = plt.subplots(figsize=(20, 12))
     dendrogram(Z, labels=samples, leaf_rotation=90, leaf_font_size=18, ax=ax)
-    ax.set_title('Hierarchical Clustering Dendrogram (Ward) - Large', fontsize=22)
+    ax.set_title('Hierarchical Clustering Dendrogram (Ward)', fontsize=22)
     ax.set_xlabel('Sample', fontsize=18)
     ax.set_ylabel('Distance', fontsize=18)
     plt.tight_layout()
     png = f'{OUT_PREFIX}_dendrogram.png'
-    pdf = f'{OUT_PREFIX}_dendrogram.pdf'
+    # pdf = f'{OUT_PREFIX}_dendrogram.pdf'
     plt.savefig(png, dpi=SAVE_DPI, bbox_inches='tight')
-    plt.savefig(pdf, dpi=SAVE_DPI, bbox_inches='tight')
+    # plt.savefig(pdf, dpi=SAVE_DPI, bbox_inches='tight')
     plt.close()
 
 
@@ -93,12 +93,12 @@ def save_heatmap():
     ax.set_yticklabels(names_sorted, fontsize=12)
     ax.set_xticks(range(len(features)))
     ax.set_xticklabels(features, rotation=90, fontsize=14)
-    ax.set_title('Heatmap (Major Elements) - Large', fontsize=22)
+    ax.set_title('Heatmap (Major Elements)', fontsize=22)
     plt.tight_layout()
     png = f'{OUT_PREFIX}_heatmap.png'
-    pdf = f'{OUT_PREFIX}_heatmap.pdf'
+    # pdf = f'{OUT_PREFIX}_heatmap.pdf'
     plt.savefig(png, dpi=SAVE_DPI, bbox_inches='tight')
-    plt.savefig(pdf, dpi=SAVE_DPI, bbox_inches='tight')
+    # plt.savefig(pdf, dpi=SAVE_DPI, bbox_inches='tight')
     plt.close()
 
 
@@ -111,6 +111,6 @@ if __name__ == '__main__':
     save_heatmap()
     print('Saved heatmap')
     print('Done. Files:')
-    print(f' - {OUT_PREFIX}_pca_triplot.png/pdf')
-    print(f' - {OUT_PREFIX}_dendrogram.png/pdf')
-    print(f' - {OUT_PREFIX}_heatmap.png/pdf')
+    # print(f' - {OUT_PREFIX}_pca_triplot.png/pdf')
+    # print(f' - {OUT_PREFIX}_dendrogram.png/pdf')
+    # print(f' - {OUT_PREFIX}_heatmap.png/pdf')
