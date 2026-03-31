@@ -20,6 +20,7 @@ plt.rcParams.update({
     'ytick.labelsize': 12,
     'legend.fontsize': 12,
 })
+# check update
 
 # Load the data
 print("Loading metal concentration data...")
