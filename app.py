@@ -118,9 +118,9 @@ def run_pca_menu():
 
 	outdir = ensure_outputs_dir('outputs')
 	# save numeric results
-	scores.to_csv(os.path.join(outdir, 'pca_scores.csv'), index=False)
-	loadings.to_csv(os.path.join(outdir, 'pca_loadings.csv'))
-	explained.to_csv(os.path.join(outdir, 'pca_explained_variance.csv'), header=['explained_variance_ratio'])
+	# scores.to_csv(os.path.join(outdir, 'pca_scores.csv'), index=False)
+	# loadings.to_csv(os.path.join(outdir, 'pca_loadings.csv'))
+	# explained.to_csv(os.path.join(outdir, 'pca_explained_variance.csv'), header=['explained_variance_ratio'])
 
 	print('\nWhat would you like to calculate/plot in PCA?')
 	print('1. heatmap')
